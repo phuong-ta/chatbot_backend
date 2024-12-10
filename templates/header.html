@@ -1,28 +1,27 @@
-<header>
-
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+<header class="container">
+    <nav class="navbar navbar-expand-lg m-2">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Metropolia_Chatbot</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+            <a class="navbar-brand  text-success" href="#">OpenAI chatbot</a>
+            <button aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation"
+                    class="navbar-toggler"
+                    data-bs-target="#navbarText" data-bs-toggle="collapse" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-flex flex-column" id="navbarNav">
-                <ul class="navbar-nav">
+            <div class="collapse navbar-collapse " id="navbarText">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        {% include 'list_files.html' %}
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
+                        {% include 'add_file.html' %}
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                        {% include 'usage.html' %}
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 </header>
+
