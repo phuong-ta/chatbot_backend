@@ -36,7 +36,8 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
-                    <button class="btn btn-success btn-block" data-mdb-button-init data-mdb-ripple-init data-bs-dismiss="modal" type="submit">
+                    <button class="btn btn-success btn-block" data-bs-dismiss="modal" data-mdb-button-init
+                            data-mdb-ripple-init type="submit">
                         Submit
                     </button>
                 </div>
@@ -46,6 +47,48 @@
 </div>
 
 <script>
+    // Select the form and attach an event listener to handle the submit
+    const formElement = document.querySelector('form');
 
+    formElement.addEventListener('submit', async function (event) {
+        event.preventDefault(); // Prevent the default form submission behavior
 
+        // Get the file input element and the selected file
+        const fileInput = document.getElementById('formFile');
+        const file = fileInput.files[0]; // Get the first selected file
+
+        // Get additional form data (description and password)
+        const description = document.getElementById('description').value;
+        const password = document.getElementById('inputPassword').value;
+
+        // Prepare a FormData object to send the file and other data
+        const formData = new FormData();
+        formData.append('file', file); // Append the file
+        formData.append('description', description); // Append the description
+        formData.append('password', password); // Append the password
+
+        try {
+            // Make a POST request to the FastAPI endpoint
+            const response = await fetch('/upload_file', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            // Parse the JSON response
+            const result = await response.json();
+            //console.log('File uploaded successfully:', result);
+
+            // Optionally, show a success message to the user
+            alert(`File "${result.filename} ${result.description}" uploaded successfully!`);
+            formElement.reset();
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            alert(`Failed to upload file. ${error}.`);
+            formElement.reset();
+        }
+    });
 </script>
