@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import JSONResponse
 
 index_router = APIRouter()
 
@@ -17,7 +18,7 @@ async def root(request: Request):
 @index_router.get("/list_files")
 def list_files():
     fruit_list = ["apple", "banana", "cherry"]
-    return {"data_files": fruit_list}
+    return JSONResponse(content={"data_files": fruit_list})
 
 
 @index_router.post("/upload_file")
