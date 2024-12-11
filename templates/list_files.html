@@ -13,12 +13,7 @@
                 <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
             <div class="modal-body">
-                <ul class="list-group list-group-flush" id="fruit-list">
-                    <li class="list-group-item">Click upload file to add pdf files</li>
-                    <li class="list-group-item">Click list file on left side to see file data</li>
-                    <li class="list-group-item">Type your message in text area</li>
-                    <li class="list-group-item">Use @ to tag file, what you want to ask</li>
-                    <li class="list-group-item">Click send or Enter to send message</li>
+                <ul class="list-group list-group-numbered" id="fruit-list">
                 </ul>
             </div>
             <div class="modal-footer">
@@ -42,7 +37,7 @@
 
                 fruitList.forEach(fruit => {
                     const listItem = document.createElement('li');
-                    listItem.className = "list-group-item";
+                    listItem.className = "list-group-item"
                     listItem.textContent = fruit;
                     fruitListElement.appendChild(listItem);
                 });
