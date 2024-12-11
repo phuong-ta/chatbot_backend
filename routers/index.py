@@ -16,6 +16,10 @@ async def root(request: Request):
         request=request, name="index.html", context={"data_files": "ok"}
     )
 
+@index_router.post("/message/", status_code=status.HTTP_201_CREATED)
+async def create_item(message: Annotated[str, Form()]):
+    return {"response": message + " server"}
+
 
 @index_router.get("/list_files")
 def list_files():
