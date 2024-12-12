@@ -1,36 +1,4 @@
-name: Deploy to Google Cloud
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-        with:
-          version: 'latest'
-
-      - name: Decode Google Cloud Credentials
-        env:
-          GCLOUD_CREDENTIALS_BASE64: ${{ secrets.GCLOUD_CREDENTIALS_BASE64 }}
-        run: |
-          echo "$GCLOUD_CREDENTIALS_BASE64" | base64 --decode > gcloud.json
-        
-      - name: Authenticate with Google Cloud
-        run: |
-          gcloud auth activate-service-account --key-file=gcloud.json
-          gcloud config set project YOUR_PROJECT_ID
-        
-      - name: Deploy Application
-        run: |
-          # Add your deployment commands here
-          # Example:
-          # gcloud app deploy
+name: Create Google Services JSON File
+  env:
+    GOOGLE_SERVICES_JSON: ${{ secrets.GCLOUD_CREDENTIALS_BASE64 }}
+  run: echo $GCLOUD_CREDENTIALS_BASE64 | base64 -di > ./<folder>/google-credentials.json
