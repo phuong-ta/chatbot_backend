@@ -1,0 +1,13 @@
+name: Retrieve Base64 secret
+on: push
+
+jobs:
+  decode-secret:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode Base64 secret
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        run: |
+          echo $GOOGLE_CREDENTIALS | base64 --decode > cert.der
