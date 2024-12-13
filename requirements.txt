@@ -3,3 +3,4 @@ jinja2
 uvicorn
 gunicorn
 google-cloud
+google-cloud-storage
