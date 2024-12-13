@@ -2,3 +2,4 @@ fastapi[all]
 jinja2
 uvicorn
 gunicorn
+google-cloud
