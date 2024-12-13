@@ -1,5 +1,5 @@
 <!-- Button trigger modal -->
-<button class="btn btn-outline-success me-2 " data-bs-target="#list_files" data-bs-toggle="modal" id="load-fruit-btn"
+<button class="btn btn-outline-success me-2 " data-bs-target="#list_files" data-bs-toggle="modal" id="load-file-btn"
         type="button">
     Data files
 </button>
@@ -13,7 +13,7 @@
                 <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
             <div class="modal-body">
-                <ul class="list-group list-group-numbered" id="fruit-list">
+                <ul class="list-group list-group-numbered" id="file-list">
                 </ul>
             </div>
             <div class="modal-footer">
@@ -25,21 +25,21 @@
 
 <script>
     // Set up the button to fetch the fruit list when clicked
-    document.getElementById('load-fruit-btn').addEventListener('click', function () {
+    document.getElementById('load-file-btn').addEventListener('click', function () {
         // Make an AJAX request to the FastAPI endpoint
         fetch('/list_files')
             .then(response => response.json())
             .then(data => {
                 // Display the list of fruits in the <ul> element
-                const fruitList = data.data_files;
-                const fruitListElement = document.getElementById('fruit-list');
-                fruitListElement.innerHTML = ''; // Clear existing list
+                const fileList = data.data_files;
+                const fileListElement = document.getElementById('file-list');
+                fileListElement.innerHTML = ''; // Clear existing list
 
-                fruitList.forEach(fruit => {
+                fileList.forEach(fruit => {
                     const listItem = document.createElement('li');
                     listItem.className = "list-group-item"
                     listItem.textContent = fruit;
-                    fruitListElement.appendChild(listItem);
+                    fileListElement.appendChild(listItem);
                 });
             })
             .catch(error => console.error('Error fetching data:', error));
