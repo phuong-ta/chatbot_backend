@@ -4,11 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, status, Form, HTTPException
 from langchain_openai import ChatOpenAI, OpenAI
 
-os.environ.get("OPENAI_KEY")
-    
+openai_key = os.environ['OPENAI_KEY']
 
-model = ChatOpenAI(model="gpt-4o-mini")
-llm = OpenAI()
 
 message_router = APIRouter()
 
@@ -21,6 +18,6 @@ async def create_upload_file(message: Annotated[str, Form()]):
         # Raise an HTTP exception with a 403 status code
         raise HTTPException(status_code=403, detail="Wrong password")
 
-    response = llm.invoke(message)
+    # response = llm.invoke(message)
     # If the password is correct, return the file information
-    return {"response": response}
+    return {"response": openai_key}
