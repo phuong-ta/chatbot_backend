@@ -4,3 +4,5 @@ uvicorn
 gunicorn
 google-cloud
 google-cloud-storage
+langchain-openai
+langchain
