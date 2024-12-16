@@ -5,13 +5,13 @@ from fastapi import APIRouter, status, Form, HTTPException
 from langchain_openai import ChatOpenAI, OpenAI
 
 
-os.environ['OPENAI_KEY']
+api_key=os.environ['OPENAI_KEY']
 
 llm = OpenAI(
     model="gpt-3.5-turbo-instruct",
     temperature=0,
     max_retries=2,
-    # api_key="...",
+    api_key=api_key,
     # base_url="...",
     # organization="...",
     # other params...
