@@ -32,7 +32,7 @@ async def create_upload_file(message: Annotated[str, Form()]):
 
     response = llm.invoke(message)
     # If the password is correct, return the file information
-    return {"response": "Hi "+ message}
+    return {"response": "Hi "+ response}
 
     """
     responses = llm.invoke(message)
