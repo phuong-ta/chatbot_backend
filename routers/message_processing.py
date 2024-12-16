@@ -30,10 +30,15 @@ async def create_upload_file(message: Annotated[str, Form()]):
         # Raise an HTTP exception with a 403 status code
         raise HTTPException(status_code=403, detail="Wrong password")
 
-    # response = llm.invoke(message)
+    response = llm.invoke(message)
     # If the password is correct, return the file information
+    return {"response": "Hi "+ message}
+
+    """
     responses = llm.invoke(message)
     if responses["status"] == "ok":
         return {"response": llm.invoke(message)}
     else:
         return {"response": "Error"}
+        
+          """
