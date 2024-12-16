@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, status, Form, HTTPException
 from langchain_openai import ChatOpenAI, OpenAI
 
-if not os.environ.get("OPENAI_API_KEY"):
-    os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter API key for OpenAI: ")
+os.environ.get("OPENAI_KEY")
+    
 
 model = ChatOpenAI(model="gpt-4o-mini")
 llm = OpenAI()
