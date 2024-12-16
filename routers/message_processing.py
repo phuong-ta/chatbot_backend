@@ -4,7 +4,18 @@ from typing import Annotated
 from fastapi import APIRouter, status, Form, HTTPException
 from langchain_openai import ChatOpenAI, OpenAI
 
-openai_key = os.environ['OPENAI_KEY']
+
+os.environ['OPENAI_KEY']
+
+llm = OpenAI(
+    model="gpt-3.5-turbo-instruct",
+    temperature=0,
+    max_retries=2,
+    # api_key="...",
+    # base_url="...",
+    # organization="...",
+    # other params...
+)
 
 
 message_router = APIRouter()
@@ -20,4 +31,4 @@ async def create_upload_file(message: Annotated[str, Form()]):
 
     # response = llm.invoke(message)
     # If the password is correct, return the file information
-    return {"response": openai_key}
+    return {"response": llm.invoke(message)}
