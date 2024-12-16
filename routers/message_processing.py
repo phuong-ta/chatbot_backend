@@ -1,5 +1,6 @@
 import getpass
 import os
+from http.client import responses
 from typing import Annotated
 from fastapi import APIRouter, status, Form, HTTPException
 from langchain_openai import ChatOpenAI, OpenAI
@@ -31,4 +32,8 @@ async def create_upload_file(message: Annotated[str, Form()]):
 
     # response = llm.invoke(message)
     # If the password is correct, return the file information
-    return {"response": llm.invoke(message)}
+    responses = llm.invoke(message)
+    if responses["status"] == "ok":
+        return {"response": llm.invoke(message)}
+    else:
+        return {"response": "Error"}
