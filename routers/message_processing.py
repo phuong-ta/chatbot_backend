@@ -5,12 +5,12 @@ from langchain_openai import OpenAI
 from langchain_google_genai import GoogleGenerativeAI
 import os
 import sys
-
+from dotenv import load_dotenv
 
 
 
 message_router = APIRouter()
-api_key = os.environ.get("OPENAI_API_KEY")
+api_key = os.environ.get("GOOGLE_API_KEY")
 
 
 @message_router.post("/message/", status_code=status.HTTP_201_CREATED)
