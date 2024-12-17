@@ -6,3 +6,6 @@ google-cloud
 google-cloud-storage
 langchain-openai
 langchain
+langchain-google-genai
+langchain-community
+langchain-core
