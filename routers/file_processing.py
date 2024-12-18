@@ -2,12 +2,6 @@ from typing import Annotated
 
 from fastapi import APIRouter, status, UploadFile, Form, HTTPException
 from google.cloud import storage
-from langchain.document_loaders import PyPDFLoader
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
-
 
 file_router = APIRouter()
 
