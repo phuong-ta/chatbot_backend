@@ -46,47 +46,34 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
         # Raise an HTTP exception with a 403 status code
         raise HTTPException(status_code=403, detail="Wrong password")
     contents = file.file.read()
-
     file.file.seek(0)
     # Add metadata (optional)
     metadata = {
         "name": file.filename,
         "description": description
     }
-
     bucket_name = "chatbot-data-metropolia"
     original_data_path = "original"
-    vector_data_path = "vector"
+    vector_data_path = "original"
 
-    # upload file to cloud
     upload_blob_from_memory(bucket_name=bucket_name, contents=contents,
                             destination_blob_name=f"{original_data_path}/{file.filename}", metadata=metadata)
 
-    # load file  from cloud
-    documents = load_file_from_cloud(bucket_name=bucket_name, destination_blob_name=f"{original_data_path}/{file.filename}")
+    data = PyPDFLoader((file.file.read()).decode("utf-8"))
+    documents = data.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    texts = text_splitter.split_documents(documents=documents)
+    splits = text_splitter.split_documents(documents)
+    vectorstore = Chroma.from_documents(documents=splits, embedding=OpenAIEmbeddings(), metadata=metadata)
 
-    vectordb = Chroma.from_documents(
-        documents=texts,
-        embedding=OpenAIEmbeddings()
-    )
-
-    # upload file to cloud
-
-    upload_blob_from_memory(bucket_name=bucket_name, contents=vectordb,
+    upload_blob_from_memory(bucket_name=bucket_name, contents=vectorstore,
                             destination_blob_name=f"{vector_data_path}/{file.filename}")
 
-    if upload_blob_from_memory(bucket_name=bucket_name, contents=vectordb,
-                            destination_blob_name=f"{vector_data_path}/{file.filename}"):
 
 
-        # If the password is correct, return the file information
-        return {
-            "success": True,
-            "message": "File uploaded successfully",
-            "filename": file.filename
-        }
 
-    else:
-        return {}
+    # If the password is correct, return the file information
+    return {
+        "success": True,
+        "message": "File uploaded successfully",
+        "filename": file.filename
+    }
