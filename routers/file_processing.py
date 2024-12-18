@@ -34,10 +34,11 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
         "description": description
     }
     bucket_name = "chatbot-data-metropolia"
-    original_data = "data/original"
+    original_data_path = "original"
+    vector_data_path = "original"
 
     upload_blob_from_memory(bucket_name=bucket_name, contents=contents,
-                            destination_blob_name=f"{bucket_name}/{original_data}/{file.filename}", metadata=metadata)
+                            destination_blob_name=f"{original_data_path}/{file.filename}", metadata=metadata)
     # If the password is correct, return the file information
     return {
         "success": True,
