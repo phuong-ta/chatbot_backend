@@ -25,19 +25,6 @@ def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metada
     return True
 
 
-def load_file_from_cloud(bucket_name, destination_blob_name):
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(destination_blob_name)
-    loader = PyPDFLoader(blob.download_as_string().decode("utf-8"))
-    docs = loader.load()
-    return docs
-
-
-
-
-
-
 @file_router.post("/upload_file", status_code=status.HTTP_201_CREATED)
 async def create_upload_file(description: Annotated[str, Form()], password: Annotated[str, Form()], file: UploadFile):
     # Process the file, description, and password as needed
@@ -58,18 +45,6 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
 
     upload_blob_from_memory(bucket_name=bucket_name, contents=contents,
                             destination_blob_name=f"{original_data_path}/{file.filename}", metadata=metadata)
-
-    data = PyPDFLoader((file.file.read()).decode("utf-8"))
-    documents = data.load()
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    splits = text_splitter.split_documents(documents)
-    vectorstore = Chroma.from_documents(documents=splits, embedding=OpenAIEmbeddings(), metadata=metadata)
-
-    upload_blob_from_memory(bucket_name=bucket_name, contents=vectorstore,
-                            destination_blob_name=f"{vector_data_path}/{file.filename}")
-
-
-
 
     # If the password is correct, return the file information
     return {
