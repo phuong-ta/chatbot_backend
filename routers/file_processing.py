@@ -42,21 +42,10 @@ def store_vector_data(project_id, location, display_name, bucket_name, file_path
         publisher_model=f"publishers/google/models/{embedding_model}"
     )
 
-    rag_corpus = rag.create_corpus(
+    rag.create_corpus(
         display_name=display_name,
         embedding_model_config=embedding_model_config,
     )
-
-    # Import Files to the RagCorpus
-    rag.import_files(
-        rag_corpus.name,
-        file_paths,
-        chunk_size=512,  # Optional
-        chunk_overlap=100,  # Optional
-        max_embedding_requests_per_min=900,  # Optional
-    )
-
-    print(f"Vector data from files in {bucket_name} stored in RagCorpus '{display_name}' successfully.")
 
 
 
@@ -75,7 +64,7 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
         "name": file.filename,
         "description": description
     }
-    bucket_name = "chatbot-data-metropolia"
+    bucket_name = "metropolia_chatobt"
     original_data_path = "original"
     vector_data_path = "original"
 
