@@ -1,20 +1,10 @@
+import os
 from typing import Annotated
 
+import vertexai
 from fastapi import APIRouter, status, UploadFile, Form, HTTPException
 from google.cloud import storage
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_chroma import Chroma
-from langchain_openai import OpenAIEmbeddings
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-
-from google.cloud import aiplatform
 from vertexai.preview import rag
-from vertexai.preview.generative_models import GenerativeModel, Tool
-import vertexai
-import os
-
 
 file_router = APIRouter()
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -32,8 +22,9 @@ def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metada
     blob.upload_from_string(contents)
     return True
 
-def store_vector_data(project_id, location, display_name, bucket_name, file_paths, embedding_model="text-embedding-004"):
-
+"""
+def store_vector_data(project_id, location, display_name, bucket_name, file_paths,
+                      embedding_model="text-embedding-004"):
     # Initialize Vertex AI API once per session
     vertexai.init(project=project_id, location=location)
 
@@ -46,9 +37,7 @@ def store_vector_data(project_id, location, display_name, bucket_name, file_path
         display_name=display_name,
         embedding_model_config=embedding_model_config,
     )
-
-
-
+"""
 
 @file_router.post("/upload_file", status_code=status.HTTP_201_CREATED)
 async def create_upload_file(description: Annotated[str, Form()], password: Annotated[str, Form()], file: UploadFile):
@@ -66,17 +55,15 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
     }
     bucket_name = "metropolia_chatobt"
     original_data_path = "original"
-    vector_data_path = "original"
 
     upload_blob_from_memory(bucket_name=bucket_name, contents=contents,
                             destination_blob_name=f"{original_data_path}/{file.filename}", metadata=metadata)
 
-    store_vector_data(project_id=3046579594799874048,location="europe-north1",display_name="metropolia_rag",bucket_name="metropolia_chatobt", file_paths="gs://metropolia_chatobt",embedding_model="text-embedding-004")
+    # store_vector_data(project_id=3046579594799874048,location="europe-north1",display_name="metropolia_rag",bucket_name="metropolia_chatobt", file_paths="gs://metropolia_chatobt",embedding_model="text-embedding-004")
 
-
-        # If the password is correct, return the file information
+    # If the password is correct, return the file information
     return {
-            "success": True,
-            "message": "File uploaded successfully",
-            "filename": file.filename
-        }
+        "success": True,
+        "message": "File uploaded successfully",
+        "filename": file.filename
+    }
