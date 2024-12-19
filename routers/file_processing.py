@@ -2,8 +2,22 @@ from typing import Annotated
 
 from fastapi import APIRouter, status, UploadFile, Form, HTTPException
 from google.cloud import storage
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+
+from google.cloud import aiplatform
+from vertexai.preview import rag
+from vertexai.preview.generative_models import GenerativeModel, Tool
+import vertexai
+import os
+
 
 file_router = APIRouter()
+api_key = os.environ.get("OPENAI_API_KEY")
 
 
 def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metadata=None):
@@ -17,6 +31,34 @@ def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metada
 
     blob.upload_from_string(contents)
     return True
+
+def store_vector_data(project_id, location, display_name, bucket_name, file_paths, embedding_model="text-embedding-004"):
+
+    # Initialize Vertex AI API once per session
+    vertexai.init(project=project_id, location=location)
+
+    # Create RagCorpus
+    embedding_model_config = rag.EmbeddingModelConfig(
+        publisher_model=f"publishers/google/models/{embedding_model}"
+    )
+
+    rag_corpus = rag.create_corpus(
+        display_name=display_name,
+        embedding_model_config=embedding_model_config,
+    )
+
+    # Import Files to the RagCorpus
+    rag.import_files(
+        rag_corpus.name,
+        file_paths,
+        chunk_size=512,  # Optional
+        chunk_overlap=100,  # Optional
+        max_embedding_requests_per_min=900,  # Optional
+    )
+
+    print(f"Vector data from files in {bucket_name} stored in RagCorpus '{display_name}' successfully.")
+
+
 
 
 @file_router.post("/upload_file", status_code=status.HTTP_201_CREATED)
@@ -40,9 +82,12 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
     upload_blob_from_memory(bucket_name=bucket_name, contents=contents,
                             destination_blob_name=f"{original_data_path}/{file.filename}", metadata=metadata)
 
-    # If the password is correct, return the file information
+    store_vector_data(project_id=3046579594799874048,location="europe-north1",display_name="metropolia_rag",bucket_name="metropolia_chatobt", file_paths="gs://metropolia_chatobt",embedding_model="text-embedding-004")
+
+
+        # If the password is correct, return the file information
     return {
-        "success": True,
-        "message": "File uploaded successfully",
-        "filename": file.filename
-    }
+            "success": True,
+            "message": "File uploaded successfully",
+            "filename": file.filename
+        }
