@@ -9,7 +9,6 @@ file_router = APIRouter()
 api_key = os.environ.get("OPENAI_API_KEY")
 
 from google.cloud import storage
-import json
 
 """
 def get_json_from_bucket(bucket_name, file_name):
@@ -80,6 +79,9 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
     upload_blob_from_memory(bucket_name=bucket_name, contents=contents,
                             destination_blob_name=f"{file.filename}", metadata=metadata)
 
+    vector_count = store_vector_data(project_id="chatbot-444605", location="europe-north1",
+                                     corpus_name="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",
+                                     bucket_path=f"{file.filename}")
 
     # If the password is correct, return the file information
     return {
