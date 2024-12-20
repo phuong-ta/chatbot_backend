@@ -4,13 +4,14 @@ from typing import Annotated
 import vertexai
 from fastapi import APIRouter, status, UploadFile, Form, HTTPException
 from vertexai.preview import rag
+import json
 
 file_router = APIRouter()
 api_key = os.environ.get("OPENAI_API_KEY")
 
 from google.cloud import storage
 
-"""
+
 def get_json_from_bucket(bucket_name, file_name):
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
@@ -24,7 +25,7 @@ def get_json_from_bucket(bucket_name, file_name):
 
     return json_data
 
-
+"""
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = get_json_from_bucket(bucket_name="metropolia_chatobt",
                                                                     file_name="google_credentials.json")
                                                 
