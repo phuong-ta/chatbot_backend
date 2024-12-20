@@ -16,25 +16,21 @@ message_router = APIRouter()
 api_key = os.environ.get("OPENAI_API_KEY")
 
 
-def get_retrieval():
-    rag_retrieval_tool = Tool.from_retrieval(
-        retrieval=rag.Retrieval(
-            source=rag.VertexRagStore(
-                rag_resources=[
-                    rag.RagResource(
-                        rag_corpus="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",  # Currently only 1 corpus is allowed.
-                        # Optional: supply IDs from `rag.list_files()`.
-                        #rag_file_ids=["5328272052996022510"],
-                    )
-                ],
-                #similarity_top_k=3,  # Optional
-                vector_distance_threshold=0.5,  # Optional
-            ),
-        )
+rag_retrieval_tool = Tool.from_retrieval(
+    retrieval=rag.Retrieval(
+        source=rag.VertexRagStore(
+            rag_resources=[
+                rag.RagResource(
+                    rag_corpus="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",  # Currently only 1 corpus is allowed.
+                    # Optional: supply IDs from `rag.list_files()`.
+                    # rag_file_ids=["rag-file-1", "rag-file-2", ...],
+                )
+            ],
+            similarity_top_k=3,  # Optional
+            vector_distance_threshold=0.5,  # Optional
+        ),
     )
-
-    return rag_retrieval_tool
-
+)
 
 @message_router.post("/message/", status_code=status.HTTP_201_CREATED)
 async def create_upload_file(message: Annotated[str, Form()]):
@@ -46,7 +42,7 @@ async def create_upload_file(message: Annotated[str, Form()]):
 
     # Create a gemini-pro model instance
     rag_model = GenerativeModel(
-        model_name="gemini-1.5-flash-001", tools=[get_retrieval()]
+        model_name="gemini-1.5-flash-001", tools=[rag_retrieval_tool]
     )
 
 
