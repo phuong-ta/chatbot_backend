@@ -46,6 +46,10 @@ def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metada
     return True
 
 
+def list_corpus():
+    vertexai.init(project="chatbot-444605", location="us-central1")
+
+
 def store_vector_data(project_id, location, corpus_name, bucket_path):
     # Initialize Vertex AI API once per session
     vertexai.init(project=project_id, location=location)
@@ -83,11 +87,12 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
 
     vector_count = store_vector_data(project_id="chatbot-444605", location="us-central1",
                                      corpus_name="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",
-                                     bucket_path=f"{file.filename}")
+                                     bucket_path=f"gs://{bucket_name}/{file.filename}")
 
     # If the password is correct, return the file information
     return {
         "success": True,
         "message": "File uploaded successfully",
-        "filename": file.filename
+        "filename": file.filename,
+        "vector_count": vector_count
     }
