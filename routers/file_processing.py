@@ -11,7 +11,7 @@ api_key = os.environ.get("OPENAI_API_KEY")
 from google.cloud import storage
 import json
 
-
+"""
 def get_json_from_bucket(bucket_name, file_name):
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
@@ -28,6 +28,8 @@ def get_json_from_bucket(bucket_name, file_name):
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = get_json_from_bucket(bucket_name="metropolia_chatobt",
                                                                     file_name="google_credentials.json")
+                                                
+"""
 
 
 def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metadata=None):
