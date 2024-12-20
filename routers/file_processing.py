@@ -25,9 +25,10 @@ def get_json_from_bucket(bucket_name, file_name):
 
     return json_data
 
-
+""""
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = get_json_from_bucket(bucket_name="metropolia_chatobt",
                                                                     file_name="google_credentials.json")
+                                                                    """
                                                 
 
 
@@ -80,7 +81,7 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
     upload_blob_from_memory(bucket_name=bucket_name, contents=contents,
                             destination_blob_name=f"{file.filename}", metadata=metadata)
 
-    vector_count = store_vector_data(project_id="chatbot-444605", location="europe-north1",
+    vector_count = store_vector_data(project_id="chatbot-444605", location="us-central1",
                                      corpus_name="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",
                                      bucket_path=f"{file.filename}")
 
