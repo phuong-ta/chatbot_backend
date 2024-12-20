@@ -44,7 +44,7 @@ def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metada
     blob.upload_from_string(contents)
     return True
 
-"""
+
 def store_vector_data(project_id, location, corpus_name, bucket_path):
     # Initialize Vertex AI API once per session
     vertexai.init(project=project_id, location=location)
@@ -59,7 +59,7 @@ def store_vector_data(project_id, location, corpus_name, bucket_path):
     )
 
     return response.imported_rag_files_count
-"""
+
 
 @file_router.post("/upload_file", status_code=status.HTTP_201_CREATED)
 async def create_upload_file(description: Annotated[str, Form()], password: Annotated[str, Form()], file: UploadFile):
