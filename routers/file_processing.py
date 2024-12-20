@@ -3,11 +3,31 @@ from typing import Annotated
 
 import vertexai
 from fastapi import APIRouter, status, UploadFile, Form, HTTPException
-from google.cloud import storage
 from vertexai.preview import rag
 
 file_router = APIRouter()
 api_key = os.environ.get("OPENAI_API_KEY")
+
+from google.cloud import storage
+import json
+
+
+def get_json_from_bucket(bucket_name, file_name):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(file_name)
+
+    # Get the file contents as bytes
+    file_contents = blob.download_as_bytes()
+
+    # Decode the JSON data
+    json_data = json.loads(file_contents.decode("utf-8"))
+
+    return json_data
+
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = get_json_from_bucket(bucket_name="metropolia_chatobt",
+                                                                    file_name="google_credentials.json")
 
 
 def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metadata=None):
@@ -23,20 +43,21 @@ def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metada
     return True
 
 
-def store_vector_data(project_id, location, display_name, bucket_name, file_paths,
-                      embedding_model="text-embedding-004"):
+def store_vector_data(project_id, location, corpus_name, bucket_path):
     # Initialize Vertex AI API once per session
     vertexai.init(project=project_id, location=location)
 
-    # Create RagCorpus
-    embedding_model_config = rag.EmbeddingModelConfig(
-        publisher_model=f"publishers/google/models/{embedding_model}"
+    # Import Files to the RagCorpus
+    response = rag.import_files(
+        corpus_name=corpus_name,
+        paths=bucket_path,
+        chunk_size=512,  # Optional
+        chunk_overlap=100,  # Optional
+        max_embedding_requests_per_min=900,  # Optional
     )
 
-    rag.create_corpus(
-        display_name=display_name,
-        embedding_model_config=embedding_model_config,
-    )
+    
+    return response.imported_rag_files_count
 
 
 @file_router.post("/upload_file", status_code=status.HTTP_201_CREATED)
@@ -54,12 +75,14 @@ async def create_upload_file(description: Annotated[str, Form()], password: Anno
         "description": description
     }
     bucket_name = "metropolia_chatobt"
-    original_data_path = "original"
 
     upload_blob_from_memory(bucket_name=bucket_name, contents=contents,
-                            destination_blob_name=f"{original_data_path}/{file.filename}", metadata=metadata)
+                            destination_blob_name=f"{file.filename}", metadata=metadata)
 
-    store_vector_data(project_id=3046579594799874048,location="europe-north1",display_name="metropolia_rag",bucket_name="metropolia_chatobt", file_paths="gs://metropolia_chatobt",embedding_model="text-embedding-004")
+    vector_num = store_vector_data(project_id="chatbot-444605",
+                      location="europe-north1",
+                      corpus_name="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",
+                      bucket_path=f"gs://{bucket_name}/{file.filename}")
 
     # If the password is correct, return the file information
     return {
