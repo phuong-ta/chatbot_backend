@@ -24,7 +24,7 @@ def get_retrieval():
                     rag.RagResource(
                         rag_corpus="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",  # Currently only 1 corpus is allowed.
                         # Optional: supply IDs from `rag.list_files()`.
-                        # rag_file_ids=["rag-file-1", "rag-file-2", ...],
+                        rag_file_ids=["5328272052996022510"],
                     )
                 ],
                 #similarity_top_k=3,  # Optional
