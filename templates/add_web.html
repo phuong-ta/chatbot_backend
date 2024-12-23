@@ -16,14 +16,23 @@
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label" for="web_link">Website</label>
                         <div class="col-sm-10">
-                            <input class="form-control focus-ring focus-ring-success" placeholder="Add website link here!" id="web_link" type="text">
+                            <input class="form-control focus-ring focus-ring-success"
+                                   id="web_link" placeholder="Add website link here!" type="text">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label" for="web_name">Name</label>
+                        <div class="col-sm-10">
+                            <input class="form-control focus-ring focus-ring-success"
+                                   id="web_name" placeholder="set name for page" type="text">
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label" for="web_description">Description</label>
                         <div class="col-sm-10">
                             <textarea aria-label="With textarea" class="form-control focus-ring focus-ring-success"
-                                      id="web_description" placeholder="The role of this file in the project"></textarea>
+                                      id="web_description"
+                                      placeholder="The role of this file in the project"></textarea>
                         </div>
                     </div>
                     <div class="mb-3 row">
@@ -54,6 +63,7 @@
 
         // Get the file input element and the selected file
         const website = document.getElementById('web_link').value;
+        const web_name = document.getElementById('web_name').value;
 
         // Get additional form data (description and password)
         const description = document.getElementById('web_description').value;
@@ -62,6 +72,7 @@
         // Prepare a FormData object to send the file and other data
         const formData = new FormData();
         formData.append('website', website); // Append the file
+        formData.append('web_name', web_name); // Append the file
         formData.append('description', description); // Append the description
         formData.append('password', password); // Append the password
 
@@ -78,7 +89,6 @@
 
             // Parse the JSON response
             const result = await response.json();
-            //console.log('File uploaded successfully:', result);
 
             // Optionally, show a success message to the user
             alert(`File "${result.filename}" uploaded successfully!`);

@@ -1,10 +1,11 @@
+import json
 import os
 from typing import Annotated
 
 import vertexai
-from fastapi import APIRouter, status, UploadFile, Form, HTTPException
+from bs4 import BeautifulSoup
+from fastapi import APIRouter, status, Form, HTTPException
 from vertexai.preview import rag
-import json
 
 web_router = APIRouter()
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -25,12 +26,11 @@ def get_json_from_bucket(bucket_name, file_name):
 
     return json_data
 
+
 """"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = get_json_from_bucket(bucket_name="metropolia_chatobt",
                                                                     file_name="google_credentials.json")
                                                                     """
-                                                
-
 
 
 def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metadata=None):
@@ -63,8 +63,22 @@ def store_vector_data(project_id, location, corpus_name, file_name):
     return response.imported_rag_files_count
 
 
+def get_html_file_content(web_link):
+    # Load and parse the HTML file
+    with open(web_link, "r", encoding="utf-8") as html_file:
+        soup = BeautifulSoup(html_file, "html.parser")
+    # Extract meaningful text
+    text_content = soup.get_text(separator="\n")  # Extracts text and separates it by lines
+
+    # Optional: Remove extra whitespaces
+    text_content = "\n".join([line.strip() for line in text_content.splitlines() if line.strip()])
+
+    return text_content
+
+
 @web_router.post("/upload_website", status_code=status.HTTP_201_CREATED)
-async def create_upload_file(website: Annotated[str, Form()],description: Annotated[str, Form()], password: Annotated[str, Form()]):
+async def create_upload_file(website: Annotated[str, Form()], web_name: Annotated[str, Form()],
+                             description: Annotated[str, Form()], password: Annotated[str, Form()]):
     # Process the file, description, and password as needed
     # Check the password
     if password != "metropolia_pepe":
@@ -72,11 +86,21 @@ async def create_upload_file(website: Annotated[str, Form()],description: Annota
         raise HTTPException(status_code=403, detail="Wrong password")
     web_link = website
     # Add metadata (optional)
+
     metadata = {
         "name": web_link,
         "description": description
     }
 
+    bucket_name = "metropolia_chatobt"
+
+    upload_blob_from_memory(bucket_name=bucket_name, contents=get_html_file_content(str(web_link)),
+                            destination_blob_name=web_name, metadata=metadata)
+
+
+    vector_count = store_vector_data(project_id="chatbot-444605", location="us-central1",
+                                     corpus_name="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",
+                                     file_name=web_name)
     # If the password is correct, return the file information
     return {
         "success": True,
