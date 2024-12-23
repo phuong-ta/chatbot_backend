@@ -24,7 +24,7 @@ def list_file(bucket_name="chatbot-data-metropolia"):
     for file in files:
         file_list.append(file.display_name)
 
-    return files
+    return file_list
 
 
 @index_router.get("/list_files")

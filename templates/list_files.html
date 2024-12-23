@@ -24,21 +24,21 @@
 </div>
 
 <script>
-    // Set up the button to fetch the file list when clicked
+    // Set up the button to fetch the fruit list when clicked
     document.getElementById('load-file-btn').addEventListener('click', function () {
         // Make an AJAX request to the FastAPI endpoint
         fetch('/list_files')
             .then(response => response.json())
             .then(data => {
-                // Display the list of files in the <ul> element
+                // Display the list of fruits in the <ul> element
                 const fileList = data.data_files;
                 const fileListElement = document.getElementById('file-list');
                 fileListElement.innerHTML = ''; // Clear existing list
 
-                fileList.forEach(file => {
+                fileList.forEach(fruit => {
                     const listItem = document.createElement('li');
                     listItem.className = "list-group-item"
-                    listItem.textContent = file.display_name;
+                    listItem.textContent = fruit;
                     fileListElement.appendChild(listItem);
                 });
             })
