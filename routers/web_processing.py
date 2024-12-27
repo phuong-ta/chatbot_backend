@@ -1,11 +1,14 @@
 import json
 import os
 from typing import Annotated
+import requests
 
 import vertexai
 
 from fastapi import APIRouter, status, Form, HTTPException
 from vertexai.preview import rag
+from bs4 import BeautifulSoup
+
 
 web_router = APIRouter()
 
@@ -14,21 +17,25 @@ api_key = os.environ.get("OPENAI_API_KEY")
 from google.cloud import storage
 
 
-def get_json_from_bucket(bucket_name, file_name):
+def process_url (url):
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an exception for bad status codes
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    text = soup.get_text()
+    upload_to_cloud_storage(text, url)
+
+
+def upload_to_cloud_storage(text, url):
+    """
+    Uploads text to Cloud Storage.
+    """
+
+    bucket_name = "metropolia_chatobt"
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(file_name)
-
-    # Get the file contents as bytes
-    file_contents = blob.download_as_bytes()
-
-    # Decode the JSON data
-    json_data = json.loads(file_contents.decode("utf-8"))
-
-    return json_data
-
-
-
+    blob = bucket.blob(f"{url.replace('/', '_')}.txt")
+    blob.upload_from_string(text)
 
 @web_router.post("/upload_website", status_code=status.HTTP_201_CREATED)
 async def create_upload_file(website: Annotated[str, Form()], web_name: Annotated[str, Form()],
@@ -45,16 +52,7 @@ async def create_upload_file(website: Annotated[str, Form()], web_name: Annotate
     }
     """
     bucket_name = "metropolia_chatobt"
-
-    upload_blob_from_memory(bucket_name=bucket_name, contents=get_html_file_content(str(web_link)),
-                            destination_blob_name=web_name, metadata=metadata)
-
-
-    vector_count = store_vector_data(project_id="chatbot-444605", location="us-central1",
-                                     corpus_name="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",
-                                     file_name=web_name)
-                                     
-                                     """
+    """
     # If the password is correct, return the file information
     return {
         "success": True,
