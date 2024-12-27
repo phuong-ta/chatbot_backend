@@ -91,7 +91,7 @@ async def create_upload_file(website: Annotated[str, Form()], web_name: Annotate
         "name": web_link,
         "description": description
     }
-
+    """
     bucket_name = "metropolia_chatobt"
 
     upload_blob_from_memory(bucket_name=bucket_name, contents=get_html_file_content(str(web_link)),
@@ -101,6 +101,8 @@ async def create_upload_file(website: Annotated[str, Form()], web_name: Annotate
     vector_count = store_vector_data(project_id="chatbot-444605", location="us-central1",
                                      corpus_name="projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952",
                                      file_name=web_name)
+                                     
+                                     """
     # If the password is correct, return the file information
     return {
         "success": True,
