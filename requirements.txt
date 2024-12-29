@@ -1,8 +1,0 @@
-fastapi~=0.115.4
-google-cloud-aiplatform~=1.75.0
-protobuf~=5.29.1
-requests~=2.32.3
-beautifulsoup4~=4.12.3
-langchain-openai~=0.2.12
-langchain-google-genai~=2.0.7
-python-dotenv~=1.0.1
