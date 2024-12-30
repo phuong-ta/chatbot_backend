@@ -17,14 +17,15 @@ api_key = os.environ.get("OPENAI_API_KEY")
 from google.cloud import storage
 
 
-def process_url (url):
+def process_url (url, metadata):
     response = requests.get(url)
     response.raise_for_status()  # Raise an exception for bad status codes
 
     soup = BeautifulSoup(response.content, "html.parser")
     text = soup.get_text()
-    print(text)
-    #upload_blob_from_memory(text, url)
+    destination_blob_name = f"{url.replace('/', '_')}.txt"
+
+    upload_blob_from_memory(bucket_name ="", contents=text,destination_blob_name=destination_blob_name, metadata=metadata)
 
 
 def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metadata=None):
@@ -56,7 +57,7 @@ async def create_upload_file(website: Annotated[str, Form()], web_name: Annotate
     }
 
     bucket_name = "metropolia_chatobt"
-    process_url(website)
+    process_url(website, metadata)
 
     # If the password is correct, return the file information
     return {
