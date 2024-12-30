@@ -1,53 +1,19 @@
-import json
-import os
 from typing import Annotated
-import requests
-
-import vertexai
 
 from fastapi import APIRouter, status, Form, HTTPException
-from vertexai.preview import rag
-from bs4 import BeautifulSoup
 
-
+from document_handler import process_url, upload_blob_from_memory, store_vector_data
+import os
 web_router = APIRouter()
 
-api_key = os.environ.get("OPENAI_API_KEY")
-
-from google.cloud import storage
-
-
-def process_url (url, metadata):
-    response = requests.get(url)
-    response.raise_for_status()  # Raise an exception for bad status codes
-
-    soup = BeautifulSoup(response.content, "html.parser")
-    text = soup.get_text()
-    destination_blob_name = f"{url.replace('/', '_')}.txt"
-
-    upload_blob_from_memory(bucket_name ="metropolia_chatobt", contents=text,destination_blob_name=destination_blob_name, metadata=metadata)
-
-
-def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metadata=None):
-
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(destination_blob_name)
-
-    # Set metadata if provided
-    if metadata:
-        blob.metadata = metadata
-
-    blob.upload_from_string(contents)
-    return True
-
+upload_password = os.environ.get("UPLOAD_PASSWORD")
 
 @web_router.post("/upload_website", status_code=status.HTTP_201_CREATED)
 async def create_upload_file(website: Annotated[str, Form()], web_name: Annotated[str, Form()],
                              description: Annotated[str, Form()], password: Annotated[str, Form()]):
     # Process the file, description, and password as needed
     # Check the password
-    if password != "metropolia_pepe":
+    if password != upload_password:
         # Raise an HTTP exception with a 403 status code
         raise HTTPException(status_code=403, detail="Wrong password")
 
@@ -56,8 +22,11 @@ async def create_upload_file(website: Annotated[str, Form()], web_name: Annotate
         "description": description
     }
 
-    bucket_name = "metropolia_chatobt"
-    process_url(website, metadata)
+
+    destination_blob_name = f"{website.replace('/', '_')}.txt"
+    contents = process_url(url=website)
+    upload_blob_from_memory(contents=contents, destination_blob_name=destination_blob_name, metadata=metadata)
+    store_vector_data(website)
 
     # If the password is correct, return the file information
     return {
