@@ -6,10 +6,9 @@ from bs4 import BeautifulSoup
 from google.cloud import storage
 from vertexai.preview import rag
 
-api_key = os.environ.get("OPENAI_API_KEY")
-bucket_name = os.environ.get("BUCKET_NAME")
-project_id = os.environ.get("PROJECT_ID")
-corpus_name = os.environ.get("CORPUS_NAME")
+bucket_name = "metropolia_chatobt"
+project_id = "chatbot-444605"
+corpus_name = "projects/chatbot-444605/locations/us-central1/ragCorpora/2305843009213693952"
 
 def process_url(url):
     response = requests.get(url)
