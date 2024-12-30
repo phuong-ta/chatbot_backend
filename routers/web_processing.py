@@ -25,7 +25,7 @@ def process_url (url, metadata):
     text = soup.get_text()
     destination_blob_name = f"{url.replace('/', '_')}.txt"
 
-    upload_blob_from_memory(bucket_name ="", contents=text,destination_blob_name=destination_blob_name, metadata=metadata)
+    upload_blob_from_memory(bucket_name ="metropolia_chatobt", contents=text,destination_blob_name=destination_blob_name, metadata=metadata)
 
 
 def upload_blob_from_memory(bucket_name, contents, destination_blob_name, metadata=None):
